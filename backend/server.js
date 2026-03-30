@@ -1,43 +1,64 @@
+// server.js
+// The Express backend — receives chat messages from the frontend
+// and returns Claude's replies.
+//
+// There's only one real endpoint: POST /api/chat
+// The frontend sends the full conversation history every time
+// (the API is stateless — it doesn't remember previous messages on its own).
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { chat } from './claude.js';
 
-dotenv.config();
+// override: true forces dotenv to overwrite any existing shell env vars
+// (needed when ANTHROPIC_API_KEY is set to empty string in the shell)
+dotenv.config({ override: true });
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173' }));
+// ── Middleware ────────────────────────────────────────────────────────────────
+// cors: allows the frontend (on a different port) to call this server
+// json: parses the request body as JSON automatically
+app.use(cors());
 app.use(express.json());
 
-// POST /api/chat
-// Body: { messages: [{role, content}], userId: string }
+// ── POST /api/chat ────────────────────────────────────────────────────────────
+// The frontend sends:
+//   messages — full conversation history e.g. [{role:'user', content:'hi'}]
+//   userId   — anonymous UUID identifying this user (for watchlist)
+//
+// We return:
+//   { reply: "Claude's response text" }
 app.post('/api/chat', async (req, res) => {
   const { messages, userId } = req.body;
 
-  if (!messages || !Array.isArray(messages)) {
-    return res.status(400).json({ error: 'messages array is required' });
+  // Validation
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({ error: 'messages must be a non-empty array' });
+  }
+  if (!userId || typeof userId !== 'string') {
+    return res.status(400).json({ error: 'userId is required' });
   }
 
   try {
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-
-    await chat({ messages, userId, res });
-    res.end();
+    const reply = await chat(messages, userId);
+    return res.json({ reply });
   } catch (err) {
     console.error('Chat error:', err);
-    if (!res.headersSent) {
-      res.status(500).json({ error: 'Internal server error' });
-    } else {
-      res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`);
-      res.end();
-    }
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
   }
 });
 
-app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+// ── GET /health ───────────────────────────────────────────────────────────────
+// Simple check to confirm the server is running.
+// Useful when deploying to Render later.
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok' });
+});
 
-app.listen(PORT, () => console.log(`Reel backend running on port ${PORT}`));
+// ── Start ─────────────────────────────────────────────────────────────────────
+app.listen(PORT, () => {
+  console.log(`Reel backend running on port ${PORT}`);
+});

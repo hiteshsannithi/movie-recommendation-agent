@@ -9,7 +9,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { chat } from './claude.js';
+import { chat, initClaude } from './claude.js';
 
 // override: true forces dotenv to overwrite any existing shell env vars
 // (needed when ANTHROPIC_API_KEY is set to empty string in the shell)
@@ -59,6 +59,9 @@ app.get('/health', (_req, res) => {
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────────
+// initClaude() starts the MCP subprocess and fetches its tool list.
+// We wait for it before accepting requests so all 6 tools are ready.
+await initClaude();
 app.listen(PORT, () => {
   console.log(`Reel backend running on port ${PORT}`);
 });

@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 3001;
 // ── Middleware ────────────────────────────────────────────────────────────────
 // cors: allows the frontend (on a different port) to call this server
 // json: parses the request body as JSON automatically
-app.use(cors());
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 // ── POST /api/chat ────────────────────────────────────────────────────────────

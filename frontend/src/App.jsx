@@ -25,7 +25,7 @@ const LANGUAGE_NAMES = {
 
 const INITIAL_MESSAGE = {
   role: 'assistant',
-  content: "Hi! I'm Reel, your personal film companion 🎬\nWhat are you in the mood to watch tonight?",
+  content: "Hi! I'm WhatToWatch, your personal film companion 🎬\nWhat are you in the mood to watch tonight?",
 };
 
 export default function App() {
@@ -128,7 +128,7 @@ export default function App() {
     <div className="app">
       {/* ── Left sidebar ─────────────────────────────────────── */}
       <aside className="sidebar">
-        <div className="sidebar-brand">🎬 Reel</div>
+        <div className="sidebar-brand">🎬 WhatToWatch</div>
         <LanguageSelector selected={selectedLanguage} onChange={setLanguage} />
         <WatchlistPanel
           watchlist={watchlist}

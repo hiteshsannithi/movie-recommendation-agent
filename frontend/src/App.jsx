@@ -35,7 +35,8 @@ export default function App() {
   const [loading, setLoading]             = useState(false);
   const [selectedLanguage, setLanguage]   = useState('en');
   const [watchlist, setWatchlist]         = useState([]);
-  const [watchlistLoading, setWlLoading]  = useState(true);
+  const [watchlistLoading, setWlLoading]  = useState(false);
+  const [sidebarOpen, setSidebarOpen]     = useState(false);
 
   const bottomRef = useRef(null);
 
@@ -126,8 +127,14 @@ export default function App() {
 
   return (
     <div className="app">
+      {/* ── Mobile backdrop ──────────────────────────────────── */}
+      {sidebarOpen && (
+        <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
+      )}
+
       {/* ── Left sidebar ─────────────────────────────────────── */}
-      <aside className="sidebar">
+      <aside className={`sidebar${sidebarOpen ? ' sidebar--open' : ''}`}>
+        <button className="sidebar-close" onClick={() => setSidebarOpen(false)}>✕</button>
         <div className="sidebar-brand">🎬 WhatToWatch</div>
         <LanguageSelector selected={selectedLanguage} onChange={setLanguage} />
         <WatchlistPanel
@@ -139,6 +146,10 @@ export default function App() {
 
       {/* ── Main chat area ───────────────────────────────────── */}
       <main className="chat-area">
+        <div className="chat-topbar">
+          <button className="menu-btn" onClick={() => setSidebarOpen(true)}>☰</button>
+        </div>
+
         <div className="message-list">
           {messages.map((msg, i) => (
             <MessageBubble key={i} message={msg} />

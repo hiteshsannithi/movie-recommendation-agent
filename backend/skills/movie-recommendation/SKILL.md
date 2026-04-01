@@ -26,9 +26,9 @@ When a user describes how they feel, map it to these TMDB genres:
 
 ---
 
-## The 3-Movie Strategy
+## The 3-Movie Strategy (per response)
 
-Always structure recommendations like this:
+Structure each batch of recommendations like this — up to 3 per response:
 
 1. **Hidden gem first** — something they probably haven't seen but will love
    - Avoid the obvious choice (not Baahubali if they ask for Telugu action — go deeper)
@@ -40,6 +40,8 @@ Always structure recommendations like this:
 3. **Wildcard third** — from a different country, format, or genre edge
    - E.g. if they asked for Hindi horror, the wildcard could be a Korean thriller
    - Or if they asked for drama, go for an animated drama or a documentary
+
+**If the user asks for more:** search again with a varied query and suggest 3 more. Keep going until they're satisfied — there is no conversation limit on recommendations.
 
 ---
 

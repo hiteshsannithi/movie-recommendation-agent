@@ -231,7 +231,8 @@
 .bubble {
   padding: 12px 16px;
   border-radius: var(--radius);
-  font-size: 16px;
+  font-size: 17px;
+  font-weight: 450;
   line-height: 1.7;
   max-width: 640px;
   word-break: break-word;
@@ -361,10 +362,92 @@
   cursor: not-allowed;
 }
 
+/* ── Mobile topbar & hamburger (hidden on desktop) ───────────────────── */
+
+.chat-topbar {
+  display: none;
+}
+
+.menu-btn {
+  display: none;
+}
+
+.sidebar-close {
+  display: none;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
 /* ── Mobile responsive ────────────────────────────────────────────────── */
 
 @media (max-width: 640px) {
+  /* Sidebar becomes a fixed drawer */
   .sidebar {
-    display: none;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    height: 100%;
+    z-index: 100;
+    transition: left 0.25s ease;
+    width: 280px;
+  }
+
+  .sidebar--open {
+    left: 0;
+  }
+
+  /* Backdrop dims the chat behind the open drawer */
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 99;
+  }
+
+  /* Close button inside the drawer */
+  .sidebar-close {
+    display: flex;
+    align-self: flex-end;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    padding: 12px 14px 0;
+    line-height: 1;
+  }
+
+  .sidebar-close:hover {
+    color: var(--text);
+  }
+
+  /* Topbar strip with hamburger */
+  .chat-topbar {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+
+  .menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+  }
+
+  .menu-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 }
